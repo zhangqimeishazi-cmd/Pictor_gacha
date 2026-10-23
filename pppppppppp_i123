@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>本格キャラデザお題ガチャ</title>
+    <style>
+        body { font-family: 'Helvetica Neue', Arial, sans-serif; background-color: #fceef2; margin: 0; padding: 15px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .container { background: #ffffff; border-radius: 20px; box-shadow: 0 8px 24px rgba(255,182,193,0.3); padding: 20px; width: 100%; max-width: 450px; box-sizing: border-box; text-align: center; border: 2px solid #ffccd5; }
+        h1 { color: #ff527b; font-size: 22px; margin-bottom: 20px; font-weight: bold; }
+        .category-title { background: #ff7597; color: white; padding: 6px 12px; border-radius: 10px; font-size: 14px; font-weight: bold; text-align: left; margin: 15px 0 8px 0; display: inline-block; }
+        .gacha-box { background: #fff9fa; border-radius: 15px; padding: 15px; border: 1px dashed #ff9db2; text-align: left; }
+        .result-item { margin: 10px 0; font-size: 14px; color: #4a4a4a; display: flex; flex-direction: column; border-bottom: 1px solid #ffe6eb; padding-bottom: 6px; }
+        .result-item:last-child { border-bottom: none; }
+        .label { font-weight: bold; color: #ff527b; margin-bottom: 2px; }
+        .value { font-weight: 500; color: #333; line-height: 1.4; background: #ffffff; padding: 4px 8px; border-radius: 6px; border: 1px solid #fff0f2; }
+        button { background: linear-gradient(135deg, #ff527b 0%, #ff7fa4 100%); color: white; border: none; padding: 14px; font-size: 18px; font-weight: bold; border-radius: 30px; cursor: pointer; box-shadow: 0 4px 12px rgba(255, 82, 123, 0.3); width: 100%; margin-top: 20px; transition: transform 0.1s; touch-action: manipulation; }
+        button:active { transform: scale(0.95); }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🎨 本格キャラデザお題ガチャ</h1>
+    
+    <div class="gacha-box">
+        <div class="category-title">💇 髪パーツ</div>
+        <div class="result-item"><span class="label">前髪・後ろ髪・触覚・アホ毛:</span> <span class="value" id="hairShape">？？？</span></div>
+        <div class="result-item"><span class="label">髪の色（メイン・明るいサブ・暗いサブ）:</span> <span class="value" id="hairColor">？？？</span></div>
+
+        <div class="category-title">✨ 肌パーツ</div>
+        <div class="result-item"><span class="label">肌の色・チーク・影の色:</span> <span class="value" id="skin">？？？</span></div>
+
+        <div class="category-title">👁️ 目パーツ</div>
+        <div class="result-item"><span class="label">目の色（メイン・明るいサブ・暗いサブ）:</span> <span class="value" id="eyeColor">？？？</span></div>
+
+        <div class="category-title">👗 服・靴下</div>
+        <div class="result-item"><span class="label">服のデザイン:</span> <span class="value" id="clothesDesign">？？？</span></div>
+        <div class="result-item"><span class="label">服の色（メイン・サブ・明るいサブ・暗いサブ）:</span> <span class="value" id="clothesColor">？？？</span></div>
+        <div class="result-item"><span class="label">靴下デザイン:</span> <span class="value" id="socks">？？？</span></div>
+
+        <div class="category-title">💎 アクセサリー</div>
+        <div class="result-item"><span class="label">装飾（髪ゴム・ピアス・ブレス・ネックレス・帽子）:</span> <span class="value" id="accessories">？？？</span></div>
+
+        <div class="category-title">🎭 表情・属性</div>
+        <div class="result-item"><span class="label">キャラクターの表情・雰囲気:</span> <span class="value" id="personality">？？？</span></div>
+    </div>
+
+    <button onclick="spinGacha()">ガチャを回す！</button>
+</div>
+
+<script>
+    const hairShapes = [
+        "ぱっつん前髪 ＋ ポニーテール（長めの触覚、ぴょこっとしたアホ毛）",
+        "センター分け前髪 ＋ ショートボブ（姫カットの触覚、控えめなアホ毛）",
+        "うざバング ＋ ウルフカット（外ハネ触覚、ツンツンしたアホ毛）",
+        "斜め分け前髪 ＋ ツインテール（くるくる巻いた触覚、大きなハート型アホ毛）",
+        "シースルーバング ＋ ゆるふわロング（ゆる巻き触覚、２本立ちアホ毛）",
+        "前髪なし（おでこ出し） ＋ お団子ヘア（おくれ毛の触覚、クロスしたアホ毛）"
+    ];
+
+    const hairColors = [
+        "メイン：ミルクティーベージュ / 明るいサブ：ホワイト / 暗いサブ：ココアブラウン",
+        "メイン：漆黒（ブラック） / 明るいサブ：インナーシルバー / 暗いサブ：ダークネイビー",
+        "メイン：パステルピンク / 明るいサブ：ネオンイエロー / 暗いサブ：チェリーピンク",
+        "メイン：スカイブルー / 明るいサブ：ライトグリーン / 暗いサブ：ディープブルー",
+        "メイン：ラベンダーパープル / 明るいサブ：ホワイトピンク / 暗いサブ：ミッドナイトパープル"
+    ];
+
+    const skins = [
+        "肌：色白（美白） / チーク：ふんわりピンク / 影：薄いラベンダーグレー",
+        "肌：標準的な肌色 / チーク：ヘルシーなコーラルオレンジ / 影：ソフトブラウン",
+        "肌：健康的な小麦色（日焼け肌） / チーク：ゴールドラメ系オレンジ / 影：ディープココア",
+        "肌：少し青白い病み色がかった肌 / チーク：赤みの強いじゅわっとチーク / 影：くすんだパープルブルー"
+    ];
+
+    const eyeColors = [
+        "メイン：サファイアブルー / 明るいサブ：アクアブルー / 暗いサブ：ネイビーブルー",
+        "メイン：ルビーレッド / 明るいサブ：シトラスオレンジ / 暗いサブ：バーガンディワイン",
+        "メイン：新緑のグリーン / 明るいサブ：ミントグリーン / 暗いサブ：深緑・フォレスト",
+        "メイン：琥珀色（トパーズ） / 明るいサブ：レモンイエロー / 暗いサブ：ショコラブラウン",
+        "メイン：オッドアイ（右：紫・左：金） / 明るいサブ：パステルピンク / 暗いサブ：ダークグレー"
+    ];
+
+    const clothesDesigns = [
+        "上半身：タイトなリブニット ＋ スカート：ふんわりチュールロングスカート ＋ 服型：リボン付きキャミドレス",
+        "上半身：オーバーサイズパーカー ＋ ズボン：ダメージジーンズ ＋ 服型：カジュアルサロペットドレス",
+        "上半身：クラシックなブラウス ＋ スカート：プリーツミニスカート ＋ 服型：ハイウエストAラインドレス",
+        "上半身：オフショルダートップス ＋ ズボン：きれいめワイドパンツ ＋ 服型：大人っぽいマーメイドドレス",
+        "上半身：セーラー風トップス ＋ スカート：レイヤードフリルスカート ＋ 服型：ゴシック調パニエドレス"
+    ];
+
+    const clothesColors = [
+        "メイン：ピュアホワイト / サブ：パステルブルー / 明るいサブ：ミント / 暗いサブ：ネイビー",
+        "メイン：チャコールグレー / サブ：ワインレッド / 明るいサブ：ローズ / 暗いサブ：漆黒ブラック",
+        "メイン：パステルパープル / サブ：ベビーピンク / 明るいサブ：アイボリー / 暗いサブ：ディープバイオレット",
+        "メイン：アースベージュ / サブ：オリーブグリーン / 明るいサブ：ライトイエロー / 暗いサブ：モスグリーン"
+    ];
+
+    const socksOptions = [
+        "ニーハイソックス（リボン付き）",
+        "ルーズソックス（クシュクシュしたやつ）",
+        "網タイツ（セクシー系）",
+        "くるぶし丈のフリルスニーカーソックス",
+        "シースルーのシフォンソックス",
+        "左右非対称なハイソックス"
+    ];
+
+    const accessoriesOptions = [
+        "髪ゴム：大きめサテンリボン / ピアス：小ぶりなビジュー / ブレス：華奢なゴールド / ネックレス：一粒パール / 帽子：ベレー帽",
+        "髪ゴム：シンプルな黒ゴム / ピアス：ゴツめのシルバーチェーン / ブレス：スタッズ付きレザー / ネックレス：十字架チョーカー / 帽子：ニット帽",
+        "髪ゴム：シュシュ / ピアス：フープピアス / ブレス：クリアビーズ / ネックレス：ハートモチーフ / 帽子：ストローハット",
+        "髪ゴム：ネオンカラーのヘアピン / ピアス：安全ピン風 / ブレス：シリコンバンド / ネックレス：南京錠 / 帽子：キャスケット"
+    ];
+
+    const personalities = [
+        "ツンデレ（ツンツンしてるけど目が合うと赤くなる、可愛いポーズ）",
+        "甘えん坊（うるうるした目、袖をきゅっと掴むようなあざとした仕草）",
+        "クール（涼しげな目元、少し伏し目がちでスタイリッシュな立ち姿）",
+        "無機質（ハイライトの薄い瞳、感情が読めないドールのようなポーズ）",
+        "色気（少し流し目、口元に手を添えた大人っぽく魅力的な表情）",
+        "オシャレ（ウィンク、自信たっぷりでポーズもバッチリ決まっている流行最先端系）"
+    ];
+
+    function getRandom(array) {
+        return array[Math.floor(Math.random() * array.length)];
+    }
+
+    function spinGacha() {
+        document.getElementById("hairShape").innerText = getRandom(hairShapes);
+        document.getElementById("hairColor").innerText = getRandom(hairColors);
+        document.getElementById("skin").innerText = getRandom(skins);
+        document.getElementById("eyeColor").innerText = getRandom(eyeColors);
+        document.getElementById("clothesDesign").innerText = getRandom(clothesDesigns);
+        document.getElementById("clothesColor").innerText = getRandom(clothesColors);
+        document.getElementById("socks").innerText = getRandom(socksOptions);
+        document.getElementById("accessories").innerText = getRandom(accessoriesOptions);
+        document.getElementById("personality").innerText = getRandom(personalities);
+    }
+</script>
+
+</body>
+</html>
